@@ -1,4 +1,5 @@
 import { useReducer, useState } from "react"
+import { convertToThaiNumber, convertToThaiNumberWord } from "./translateNumbers"
 
 const MINUTE = 60
 const HOUR = 60 * MINUTE
@@ -32,6 +33,7 @@ const reducer = (state: State, action: Action) => {
 export function useTime(defaultTime: number) {
     const [timer, timerDispatch] = useReducer(reducer, {time: defaultTime})
     const [intervalId, setIntervalId] = useState<number>()
+    const [isTicking, setIsTicking] = useState(false)
 
     const getTime = () => {
         return timer.time
@@ -39,9 +41,11 @@ export function useTime(defaultTime: number) {
 
     const toggleTimer = () => {
         if (intervalId) {
+            setIsTicking(false)
             return stopTimer()
         }
 
+        setIsTicking(true)
         return startTimer()
     }
 
@@ -81,7 +85,7 @@ export function useTime(defaultTime: number) {
     }
 
 
-    const getDigits = () => {
+    const getTimeComponents = () => {
         const hours = Math.floor(timer.time/HOUR)
         const timeLeft = timer.time % HOUR
 
@@ -93,13 +97,43 @@ export function useTime(defaultTime: number) {
 
 
     const getDisplayTime = () => {
-        const digits = getDigits()
-        const hours = formatTimeAsString(digits.hours)
-        const minutes = formatTimeAsString(digits.minutes)
-        const seconds = formatTimeAsString(digits.seconds)
+        const time = getTimeComponents()
+        const hours = formatTimeAsString(time.hours)
+        const minutes = formatTimeAsString(time.minutes)
+        const seconds = formatTimeAsString(time.seconds)
 
         return `${hours}:${minutes}:${seconds}`
     }
+
+
+    const getDisplayTimeThaiDigits = () => {
+        const time = getTimeComponents()
+        const hours = convertToThaiNumber(time.hours)
+        const minutes = convertToThaiNumber(time.minutes)
+        const seconds = convertToThaiNumber(time.seconds)
+
+        return `${hours}:${minutes}:${seconds}`
+    }
+
+
+    const getDisplayTimeThai = (
+        data:Map<number,string>, 
+        isHyphenated:boolean = false
+    ) => {
+        const time = getTimeComponents()
+        const hours = convertToThaiNumberWord(
+            time.hours, data, isHyphenated
+        )
+        const minutes = convertToThaiNumberWord(
+            time.minutes, data, isHyphenated
+        )
+        const seconds = convertToThaiNumberWord(
+            time.seconds, data, isHyphenated
+        )
+
+        return `${hours}:${minutes}:${seconds}`
+    }
+
 
     return {
         getTime,
@@ -107,7 +141,10 @@ export function useTime(defaultTime: number) {
         startTimer,
         stopTimer,
         resetTimer,
-        getDisplayTime
+        getDisplayTime,
+        getDisplayTimeThaiDigits,
+        getDisplayTimeThai,
+        isTicking
     }
 
 }

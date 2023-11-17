@@ -1,83 +1,62 @@
-import { HUNDRED, HUNDRED_THOUSAND, MILLION, TEN, TEN_THOUSAND, THOUSAND } from "../constants/digits"
-import { ThaiNumberWords, ThaiNumbers } from "../constants/thaiNumbers"
+import { ThaiNumbers } from "../constants/thaiNumbers"
 
-type Digits = {
-    millions: number,
-    hundredThousands: number,
-    tenThousands: number,
-    thousands: number,
-    hundreds: number,
+export type Digits = {
     hasTwenty: boolean,
     tens: number,
-    units: number
+    units: number,
+    isZero: boolean
+}
+
+const digitToThaiNumber = (
+    units: number, 
+    digits:number, 
+    data:Map<number,string>,
+    isHyphenated:boolean = false
+) => {
+    let thaiNumberWord = ""
+    if (units > 1) {
+        thaiNumberWord += data.get(units)
+        thaiNumberWord += isHyphenated ? "-" : ""
+    }
+
+    if (units > 0) {
+        thaiNumberWord += data.get(digits)
+        thaiNumberWord += isHyphenated ? "-" : ""
+    }
+
+    return thaiNumberWord
 }
 
 
-export const getDigitsOfNumber = (number:number): Digits => {
-    const millions = Math.floor(number / MILLION)
-    let numberLeft = number % MILLION
+export const convertToThaiNumberWord = (
+    number:number, 
+    data:Map<number,string>,
+    isHyphenated:boolean = false
+) => {
+    let thaiNumberWord = ""
 
-    const hundredThousands = Math.floor(numberLeft / HUNDRED_THOUSAND)
-    numberLeft = numberLeft % MILLION
+    if (number === 0) {
+        return data.get(0)
+    }
 
-    const tenThousands = Math.floor(numberLeft / TEN_THOUSAND)
-    numberLeft = numberLeft % TEN_THOUSAND
-
-    const thousands = Math.floor(numberLeft / THOUSAND)
-    numberLeft = numberLeft % THOUSAND
-
-    const hundreds = Math.floor(numberLeft / HUNDRED)
-    numberLeft = numberLeft % HUNDRED
-
-    const hasTwenty = Math.floor(numberLeft / 20) === 1
+    let numberLeft = number
+    const hasTwenty = Math.floor(numberLeft / 10) === 2
     if (hasTwenty) {
         numberLeft = numberLeft % 20
     }
 
-    const tens = Math.floor(numberLeft / TEN)
-    numberLeft = numberLeft % TEN
+    thaiNumberWord += hasTwenty ? data.get(20) : ""
+    thaiNumberWord += hasTwenty && isHyphenated ? "-" : ""
 
-    return {
-        millions,
-        hundredThousands,
-        tenThousands,
-        thousands,
-        hundreds,
-        hasTwenty,
-        tens,
-        units: numberLeft
-    }
-}
+    const tens = Math.floor(numberLeft / 10)
+    numberLeft = numberLeft % 10
 
-
-const digitToThaiNumberWord = (units: number, digits:number) => {
-    let thaiNumberWord = ""
-    if (units > 1) {
-        thaiNumberWord += ThaiNumberWords.get(units)
-    }
-
-    if (units > 0) {
-        thaiNumberWord += ThaiNumberWords.get(digits)
-    }
+    thaiNumberWord += digitToThaiNumber(tens, 10, data, isHyphenated && !!numberLeft)
+    thaiNumberWord += numberLeft ? data.get(numberLeft) : ""
 
     return thaiNumberWord
 }
 
-
-export const convertToThaiNumberWord = (digits:Digits) => {
-    let thaiNumberWord = ""
-
-    thaiNumberWord += digitToThaiNumberWord(digits.millions, MILLION)
-    thaiNumberWord += digitToThaiNumberWord(digits.hundredThousands, HUNDRED_THOUSAND)
-    thaiNumberWord += digitToThaiNumberWord(digits.tenThousands, TEN_THOUSAND)
-    thaiNumberWord += digitToThaiNumberWord(digits.thousands, THOUSAND)
-    thaiNumberWord += digitToThaiNumberWord(digits.hundreds, HUNDRED)
-    thaiNumberWord += digits.hasTwenty || ThaiNumberWords.get(20)
-    thaiNumberWord += digitToThaiNumberWord(digits.tens, TEN)
-    thaiNumberWord += ThaiNumberWords.get(digits.units)
-
-    return thaiNumberWord
-}
 
 
 export const convertToThaiNumber = (englishNumber:number) => {

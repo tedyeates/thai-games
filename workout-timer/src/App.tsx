@@ -1,11 +1,12 @@
 import './App.css'
+import { Clock } from './components/Clock'
 import { Timer } from './components/Timer'
 
-function App() {
-
+function App() { 
     return (
         <>
-            <Timer/>
+            <Clock/>
+            <Timer />
         </>
     )
 }

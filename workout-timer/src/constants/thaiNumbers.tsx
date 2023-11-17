@@ -1,5 +1,3 @@
-import {MILLION, HUNDRED_THOUSAND, TEN_THOUSAND, THOUSAND, HUNDRED, TEN} from './digits'
-
 export const ThaiNumbers = new Map([
     ["0", "๐"],
     ["1", "๑"],
@@ -18,21 +16,16 @@ export const ThaiNumbersPronunciation = new Map([
     [0, "sun"],
     [1, "nueng"],
     [2, "song"],
-    [3, "sam"],
-    [4, "si"],
-    [5, "haa"],
+    [3, "saam"],
+    [4, "sii"],
+    [5, "ha"],
     [6, "hok"],
     [7, "chet"],
-    [8, "paet"],
-    [9, "kao"],
-    [TEN, "sip"],
-    [11, "sip et"],
-    [20, "yi sip"],
-    [HUNDRED, "roi"],
-    [THOUSAND, "phan"],
-    [TEN_THOUSAND, "muen"],
-    [HUNDRED_THOUSAND, "saen"],
-    [MILLION, "lan"]
+    [8, "bpaet"],
+    [9, "gao"],
+    [10, "sip"],
+    [11, "sip-et"],
+    [20, "yi-sip"]
 ])
 
 
@@ -47,12 +40,7 @@ export const ThaiNumberWords = new Map([
     [7, "เจ็ด"],
     [8, "แปด"],
     [9, "เก้า"],
-    [TEN, "สิบ"],
+    [10, "สิบ"],
     [11, "สิบเอ็ด"],
-    [20, "ยี่สิบ"],
-    [HUNDRED, "ร้อย"],
-    [THOUSAND, "พัน"],
-    [TEN_THOUSAND, "หมื่น"],
-    [HUNDRED_THOUSAND, "แสน"],
-    [MILLION, "ล้าน"]
+    [20, "ยี่สิบ"]
 ])
